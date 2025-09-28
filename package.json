@@ -5,7 +5,7 @@
   "main": "src/metruyenchu.js",
   "scripts": {
     "start": "node src/metruyenchu.js",
-    "buildHtlm": "node buildHtlm.js"
+    "buildHtlm": "node src/buildHtml.js"
   },
   "keywords": [
     "udemy",

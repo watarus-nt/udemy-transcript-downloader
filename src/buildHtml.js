@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const outputDir = path.join(__dirname, 'output');
-const outputHtmlFile = path.join(__dirname, 'output.html');
+const outputDir = path.join(__dirname, '../output');
+const outputHtmlFile = path.join(__dirname, '../output.html');
 
 (async () => {
   try {
