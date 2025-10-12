@@ -28,3 +28,4 @@ Thumbs.db
 # download contents
 output/*.txt
 *.html
+Chapter_*.txt

@@ -3,7 +3,7 @@
 # SCRIPT: find_missing_numbers.sh
 # DESCRIPTION: Finds missing sequence numbers within the filenames
 #              in a specified directory.
-#              This version is optimized for files named like 'chapter_900.txt'.
+#              This version is optimized for files named like 'chapter_900.html'.
 
 # --- Input Handling ---
 
@@ -24,10 +24,10 @@ if [ ! -d "$SEARCH_DIR" ]; then
 fi
 
 # --- Configuration ---
-# The pattern below finds files named 'chapter_###.txt' or 'Chapter_###.txt' (case-insensitive).
-FILENAME_PATTERN="[Cc]hapter_*.txt"
+# The pattern below finds files named 'chapter_###.html' or 'Chapter_###.html' (case-insensitive).
+FILENAME_PATTERN="[Cc]hapter_*.html"
 # NEW REGEX using sed for extraction:
-# s/.*[Cc]hapter_\([0-9]\+\)\.txt$/\1/p
+# s/.*[Cc]hapter_\([0-9]\+\)\.html$/\1/p
 # This pattern matches the full filename, captures the number (\1), and prints only the number.
 
 echo "--- Starting Missing Number Check ---"
@@ -41,14 +41,14 @@ echo "Searching files matching pattern: ${FILENAME_PATTERN}"
 # sort -n | uniq: Sorts numerically and removes duplicates.
 FILE_NUMBERS=$(find "$SEARCH_DIR" -maxdepth 1 -type f -name "$FILENAME_PATTERN" -print0 | 
                xargs -0 -n 1 basename | 
-               sed -n -E 's/.*[Cc]hapter_([0-9]+)\.txt$/\1/p' | 
+               sed -n -E 's/.*[Cc]hapter_([0-9]+)\.html$/\1/p' | 
                sort -n | 
                uniq)
 
 # Check if any numbers were found
 if [ -z "$FILE_NUMBERS" ]; then
     echo "Error: No numbers found in the filenames in '$SEARCH_DIR' matching the pattern: ${FILENAME_PATTERN}."
-    echo "Please check the directory path and the file naming convention (e.g., Chapter_900.txt)."
+    echo "Please check the directory path and the file naming convention (e.g., Chapter_900.html)."
     exit 1
 fi
 

@@ -88,3 +88,8 @@ MIT
 ## Disclaimer
 
 This tool is for personal use only. Please respect Udemy's terms of service.
+
+## Tips on Windows
+1. Start vscode with Administrator permission
+2. kill Edge processes by this command `taskkill /f /im msedge.exe`
+3. Use Calibre to build epub from html files
