@@ -63,7 +63,7 @@
     // Launch browser in headless mode
     console.log('Launching browser...');
     const browser = await puppeteerExtra.launch({
-      headless: 'new', // Use the new headless mode
+      headless: 'false', // Use the new headless mode
       defaultViewport: null,
       executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe', // Path to Edge browser
       userDataDir: 'C:\\Users\\tmhun\\AppData\\Local\\Microsoft\\Edge\\User Data',
@@ -150,6 +150,8 @@
       await browser.close();
       rl.close();
     }
+
+    findMissingChapters(outputDir);
   }
 
 
@@ -225,6 +227,71 @@
     }
   }
 
+function findMissingChapters(searchDir) {
+    // --- Configuration ---
+  // Regex to find files named 'chapter_###.html' or 'Chapter_###.html' (case-insensitive).
+  const FILENAME_REGEX = /^Chapter_(\d+)\.html$/i;
+
+  console.log("--- Starting Missing Number Check ---");
+  console.log(`Searching directory: ${searchDir}`);
+  console.log(`Searching files matching pattern: ${FILENAME_REGEX}`);
+
+  // 1. Extract all numbers from the filenames
+  let fileNumbers = [];
+  try {
+      const files = fs.readdirSync(searchDir);
+      fileNumbers = files
+          .map(file => {
+              const match = file.match(FILENAME_REGEX);
+              // If it matches, return the captured number (as an integer)
+              return match ? parseInt(match[1], 10) : null;
+          })
+          .filter(num => num !== null); // Filter out non-matching files
+  } catch (error) {
+      console.error(`Error reading directory '${searchDir}':`, error.message);
+      process.exit(1);
+  }
+
+  // Check if any numbers were found
+  if (fileNumbers.length === 0) {
+      console.error(`Error: No numbers found in the filenames in '${searchDir}' matching the pattern.`);
+      console.error("Please check the directory path and the file naming convention (e.g., Chapter_900.html).");
+      process.exit(1);
+  }
+
+  // Sort numbers numerically to easily find min/max
+  fileNumbers.sort((a, b) => a - b);
+
+  // 2. Find the minimum and maximum numbers
+  const minNum = fileNumbers[0];
+  const maxNum = fileNumbers[fileNumbers.length - 1];
+
+  console.log(`Lowest number found: ${minNum}`);
+  console.log(`Highest number found: ${maxNum}`);
+
+  // Use a Set for efficient O(1) lookups
+  const presentNumbers = new Set(fileNumbers);
+  const missingNumbers = [];
+
+  // 3. Iterate from min to max and check for presence
+  for (let i = minNum; i <= maxNum; i++) {
+      if (!presentNumbers.has(i)) {
+          missingNumbers.push(i);
+      }
+  }
+
+  // 4. Report the results
+  console.log("-------------------------------------");
+  if (missingNumbers.length === 0) {
+      console.log("✅ Success! No missing numbers found in the sequence.");
+  } else {
+      console.log(`❌ MISSING NUMBERS DETECTED (Total: ${missingNumbers.length}):`);
+      // Print numbers separated by a space
+      console.log(missingNumbers.join(' '));
+  }
+
+  console.log("--- Check Complete ---");
+}
 
   // Function to download contents
 async function downloadContents(browser, chapterLinks, tabCount = 5, starter = 0) {
@@ -311,7 +378,7 @@ async function downloadContents(browser, chapterLinks, tabCount = 5, starter = 0
         // const htmlContent = chapterData.htmlContent;
         const htmlContent = `<div id="chapter-content">
   <h2 id=${chapterNumber}>${chapterData.pageTitle}</h2>
-  ${chapterData.pageContent}
+  <p>${chapterData.pageContent}</p>
 </div>`;
         const fileName = `Chapter_${chapterNumber}.html`;
         const filePath = path.join(outputDir, fileName);

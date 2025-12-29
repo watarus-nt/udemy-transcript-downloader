@@ -113,17 +113,20 @@ function generateHtmlContent(files, includeToc) {
   
   // --- 2. Build the Table of Contents (TOC) ---
   combinedHtml += `
-    <a name="toc"></a>
-    <h1>Table of Contents</h1>
-    <br>
+    <div id="toc_container">
+      <p class="toc_title">Table of Contents</p>
+      <ul class="toc_list">
 `;
+    // combinedHtml += tocEntries.map(entry => 
+    //         // Create a link that jumps to the chapter's div using its ID
+    //         `<a href="#${entry.id}">${entry.title}</a> <br>`
+    //     ).join('\n');
     combinedHtml += tocEntries.map(entry => 
             // Create a link that jumps to the chapter's div using its ID
-            `<a href="#${entry.id}">${entry.title}</a> <br>`
+            `<li><a href="#${entry.id}">${entry.title}</a></li>`
         ).join('\n');
-
   // --- 3. Add all chapter content ---
-  combinedHtml += '<br> <br>' + chapterContents.map(item => item.chapterContent).join('\n');
+  combinedHtml += '</ul> </div><br> <br> \n' + chapterContents.map(item => item.chapterContent).join('\n');
   
   // --- 4. Close the body and html tags ---
   combinedHtml += `
